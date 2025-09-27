@@ -1,0 +1,17 @@
+pandas
+numpy
+langchain
+langchain-google-genai
+langchain-community
+langgraph
+faiss-cpu
+python-dotenv
+fastapi
+uvicorn
+streamlit
+requests
+pydantic
+nest-asyncio
+matplotlib
+jupyter
+ipykernel
