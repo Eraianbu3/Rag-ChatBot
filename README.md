@@ -264,27 +264,5 @@ streamlit run src/app.py     # Web UI
 python src/api.py           # FastAPI
 ```
 
-## Screenshots & Demonstrations
 
-### Streamlit Web Interface
-
-#### Main Chat Interface
-![Main Chat Interface](./screenshots/Screenshot%202025-09-06%20101956.png)
-*Interactive chat interface with language selection and sample questions sidebar*
-
-#### Assignment Question Testing
-![Assignment Testing](./screenshots/Screenshot%202025-09-06%20102116.png)
-*Testing assignment questions with real-time AI responses*
-
-#### Multilingual Support
-![Multilingual Support](./screenshots/Screenshot%202025-09-06%20103138.png)
-*Demonstrating multilingual capabilities and course information retrieval*
-
-### Key Features Demonstrated
-- **✅ Interactive Chat**: Real-time conversation with the AI chatbot
-- **✅ Language Selection**: 6 language support (English, Hindi, Tamil, Telugu, Kannada, Malayalam)
-- **✅ Sample Questions**: Pre-loaded assignment questions for easy testing
-- **✅ Course Information**: Detailed responses about Boss Wallah courses
-- **✅ Multilingual Responses**: Appropriate responses in selected languages
-- **✅ User-Friendly Interface**: Clean, intuitive design with clear navigation
 
