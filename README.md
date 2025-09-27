@@ -1,6 +1,6 @@
-# Boss Wallah AI Support Agent
+#AI Support Agent
 
-A sophisticated RAG-based chatbot built with LangChain, LangGraph, and Google Gemini LLM that provides intelligent support for Boss Wallah courses. The system uses advanced conditional routing to handle dataset queries and beyond-dataset requests appropriately.
+A sophisticated RAG-based chatbot built with LangChain, LangGraph, and Google Gemini LLM that provides intelligent support for courses. The system uses advanced conditional routing to handle dataset queries and beyond-dataset requests appropriately.
 
 ## Features
 
@@ -48,7 +48,7 @@ GOOGLE_API_KEY=your_api_key_here
 **Option B**: Update the `GOOGLE_API_KEY` directly in `src/main.py` in (line 17) and `src/app.py` in (line 14)
 
 #### Step 5: Verify Dataset
-The Boss Wallah course dataset (100 courses) is included at:
+The course dataset (100 courses) is included at:
 ```
 data/bw_courses - Sheet1.csv
 ```
@@ -168,13 +168,13 @@ User Query → Retrieve Documents → Detect Language → Check Relevance
 ## Project Structure
 
 ```
-Boss Wallah AI Support Agent/
+AI Support Agent/
 ├── src/                              # Source code
 │   ├── main.py                       # Core chatbot implementation (LangGraph)
 │   ├── api.py                        # FastAPI REST API server  
 │   └── app.py                        # Streamlit web interface
 ├── data/                             # Dataset
-│   └── bw_courses - Sheet1.csv       # Boss Wallah courses (100 courses)
+│   └── bw_courses - Sheet1.csv       # courses (100 courses)
 ├── docs/                             # Documentation folder                    
 ├── workflow_visualization.ipynb      # Interactive workflow exploration
 ├── workflow_diagram.png             # Auto-generated workflow diagram
