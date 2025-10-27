@@ -5,16 +5,27 @@ from typing import List, Dict, Any, TypedDict
 import warnings
 warnings.filterwarnings('ignore')
 
-from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+import requests
+import json
 from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
 from langchain.prompts import PromptTemplate
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import Tool
 from langgraph.graph import StateGraph, END
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.llms.base import LLM
+from pydantic import Field
 from dotenv import load_dotenv
+
 load_dotenv()
-os.environ['GOOGLE_API_KEY'] = ''
+
+# Groq API Configuration
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+GROQ_API_URL = os.getenv('GROQ_API_URL', 'https://api.groq.com/openai/v1')
+
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY environment variable is required")
 
 language_mapping = {
     '6': 'Hindi',
@@ -24,6 +35,44 @@ language_mapping = {
     '21': 'Telugu',
     '24': 'English'
 }
+
+# Custom Groq LLM wrapper
+class GroqLLM(LLM):
+    """Custom LLM wrapper for Groq API"""
+    model: str = Field(default="meta-llama/llama-4-maverick-17b-128e-instruct")
+    temperature: float = Field(default=0.1)
+    max_tokens: int = Field(default=1024)
+    
+    @property
+    def _llm_type(self) -> str:
+        return "groq"
+    
+    def _call(self, prompt: str, stop: List[str] = None) -> str:
+        headers = {
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens
+        }
+        
+        try:
+            response = requests.post(
+                f"{GROQ_API_URL}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result["choices"][0]["message"]["content"]
+        except Exception as e:
+            print(f"Error calling Groq API: {e}")
+            return "I apologize, but I'm having trouble processing your request right now."
 
 class ChatbotState(TypedDict):
     query: str
@@ -74,7 +123,12 @@ Course Number: {row['Course No']}"""
     return documents
 
 def setup_rag_system(documents):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    # Use HuggingFace embeddings instead of Groq (which doesn't support embeddings API)
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
+    )
     vectorstore = FAISS.from_documents(documents, embeddings)
     retriever = vectorstore.as_retriever(search_kwargs={'k': 5})
     return retriever
@@ -387,7 +441,7 @@ class BossWallahChatbot:
         self.df = load_and_process_data()
         self.documents = create_documents(self.df)
         self.retriever = setup_rag_system(self.documents)
-        self.llm = GoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.1)
+        self.llm = GroqLLM(model="llama-3.3-70b-versatile", temperature=0.1)
         self.app = self.setup_langgraph()
     
     def setup_langgraph(self):
